@@ -1,0 +1,220 @@
+import java.util.regex.Pattern
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id("io.github.surpsg.code-lines") version "0.0.1"
+}
+
+codeLinesStat {
+    sourceFilters.skipBlankLines = true
+    fileExtensions = ['java']
+}
+
+group 'app.krista.extensions.krista.llms'
+def computedBaseName = "openai-extension"
+def computedVersion = "local"
+
+tasks.register("setReleaseProperties") {
+    dependsOn("generateReleaseProperties")
+    doFirst {
+        def releasePropsFile = file("release.properties")
+        if (releasePropsFile.exists()) {
+            def props = new Properties()
+            releasePropsFile.withInputStream { stream -> props.load(stream) }
+            computedBaseName = (props['extension.name'] ?: computedBaseName).replaceAll(/\s+/, "")
+            computedVersion = props['extension.version'] ?: computedVersion
+
+            project.ext.set("finalBaseName", computedBaseName)
+            project.version = computedVersion
+
+            println "✓ Loaded extension name = ${computedBaseName}, version = ${computedVersion}"
+        } else {
+            logger.warn("⚠ release.properties not found; using default values.")
+            project.ext.set("finalBaseName", computedBaseName)
+            project.version = computedVersion
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "https://packages.cicd.in.antbrains.com/artifactory/libs-release"
+    }
+    mavenCentral()
+}
+
+configurations {
+    compileClasspath {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+
+dependencies {
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.118'
+    implementation 'app.krista:krista-apis:1.0.118'
+    implementation 'com.theokanning.openai-gpt3-java:service:0.14.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.30'
+    implementation 'io.gsonfire:gson-fire:1.8.5'
+    implementation 'dev.failsafe:failsafe:3.3.2'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    // Test dependencies
+    testImplementation 'com.kristasoft.common:common-test:1.0.37'
+    testImplementation 'org.mockito:mockito-core:5.18.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.18.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.13.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.13.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.register('createSourceDir', Exec) {
+    dependsOn processResources
+    commandLine "mkdir", "-p", "$projectDir/build/classes/java/main/META-INF/project"
+}
+
+tasks.register('copyGradleFile', Exec) {
+    dependsOn createSourceDir
+    commandLine "cp", "$projectDir/build.gradle", "$projectDir/build/classes/java/main/META-INF/project/build.gradle"
+}
+
+tasks.register('includeSources', Exec) {
+    dependsOn copyGradleFile
+    commandLine "cp", "-r", "$projectDir/src", "$projectDir/build/classes/java/main/META-INF/project/src"
+}
+
+
+
+tasks.register('generateReleaseProperties') {
+    group = 'build'
+    description = 'Generates release.properties file with extension version and domain information'
+
+    doLast {
+        def extensionFilePath = 'src/main/java/app/krista/extensions/krista/llms/openai_qa/OpenAIExtension.java'
+        def areaFilePath = 'src/main/java/app/krista/extensions/krista/llms/openai_qa/catalog/DiscussionArea.java'
+        def extensionFile = project.file(extensionFilePath)
+        def areaFile = project.file(areaFilePath)
+
+        if (!extensionFile.exists()) {
+            throw new GradleException("Extension file not found: ${extensionFilePath}")
+        }
+
+        if (!areaFile.exists()) {
+            throw new GradleException("Area file not found: ${areaFilePath}")
+        }
+
+        def properties = new Properties()
+        // Pre-compile the regex pattern for better performance
+        def keyValuePattern = Pattern.compile(/(\w+)\s*=\s*"([^"]+)"/)
+
+        // Extract Extension annotation information
+        extractAnnotationInfo(extensionFile, "@Extension", keyValuePattern) { key, value ->
+            if (key == "version") {
+                properties.setProperty("extension.version", value)
+                logger.lifecycle("Found extension version: ${value}")
+            } else if (key == "name") {
+                properties.setProperty("extension.name", value)
+                logger.lifecycle("Found extension name: ${value}")
+            }
+        }
+
+        // Extract Domain annotation information from the area file
+        extractAnnotationInfo(areaFile, "@Domain", keyValuePattern) { key, value ->
+            if (key == "name") {
+                properties.setProperty("domain.name", value)
+                logger.lifecycle("Found domain name: ${value}")
+            } else if (key == "ecosystemName") {
+                properties.setProperty("ecosystem.name", value)
+                logger.lifecycle("Found ecosystem name: ${value}")
+            }
+        }
+
+        // Set default values if not found in annotations
+        if (!properties.getProperty('extension.name')) {
+            properties.setProperty("extension.name", "Open AI")
+            logger.lifecycle("Set default extension name: Open AI")
+        }
+
+        if (!properties.getProperty('extension.version')) {
+            throw new GradleException("Could not find extension version in ${extensionFilePath}")
+        }
+
+        if (!properties.getProperty('domain.name')) {
+            properties.setProperty("domain.name", "LLMs")
+            logger.lifecycle("Set default domain name: LLMs")
+        }
+
+        if (!properties.getProperty('ecosystem.name')) {
+            properties.setProperty("ecosystem.name", "Krista")
+            logger.lifecycle("Set default ecosystem name: Krista")
+        }
+
+        def releasePropertiesFile = project.file('release.properties')
+        def content = properties.collect { key, value -> "${key}=${value}" }.join('\n')
+        releasePropertiesFile.text = content + '\n'
+        logger.lifecycle("Generated release.properties with content:\n${content}")
+    }
+}
+
+// Helper method to extract annotation information
+def extractAnnotationInfo(File file, String annotationName, Pattern keyValuePattern, Closure processProperty) {
+    StringBuilder annotationText = new StringBuilder()
+    boolean inAnnotation = false
+    file.eachLine { line ->
+        line = line.trim()
+        if (line.contains(annotationName)) {
+            inAnnotation = true
+            annotationText.setLength(0) // Reset the buffer when starting a new annotation
+            annotationText.append(line)
+        } else if (inAnnotation) {
+            annotationText.append(line)
+        }
+
+        if (inAnnotation && line.contains(")")) {
+            inAnnotation = false
+            def matcher = keyValuePattern.matcher(annotationText.toString())
+            while (matcher.find()) {
+                def key = matcher.group(1)
+                def value = matcher.group(2)
+                processProperty.call(key, value)
+            }
+        }
+    }
+
+}
+
+tasks.named("jar") {
+    dependsOn tasks.named("generateReleaseProperties")
+}
+
+jar {
+    dependsOn tasks.named("setReleaseProperties")
+    dependsOn includeSources
+    archiveBaseName = project.ext.has("finalBaseName") ? project.ext.finalBaseName : "openai-extension"
+    manifest {}
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    duplicatesStrategy = "exclude"
+}
+
+test {
+    useJUnitPlatform()
+}
