@@ -1,9 +1,25 @@
 # Release Notes for Open AI LLM Extension
 
+## Version 2.1.8
+* Krista API Version: 1.0.118
+* Developer: Ramgopal Patidar
+
+### New Features
+* **[KE-3101](https://antbrains.atlassian.net/browse/KE-3101)** - Process Files: Single Request File Processing for OpenAI
+  - New "Process Files" catalog request in the "File Analysis" area
+  - Accepts any combination of images (JPG, PNG, GIF, WebP) and documents (PDF, DOCX, PPTX, XLSX) in a single request
+  - Auto-detects file type and handles images inline (base64) and documents via OpenAI Files API upload
+  - Supports up to 20 files and 50 MB total per request
+  - Optional system instructions for guiding AI behavior
+  - Uses OpenAI Responses API for unified file processing
+  - No sessions required — stateless single request/response pattern
+
+---
+
 ## Version 2.1.7
 * Krista API Version: 1.0.118
 * Developer: Ramgopal Patidar
-* Global Catalog Version: GC-2025.12.3
+* Global Catalog Version: GC-2026.02.02
 
 ## Bugs resolved
 * **[KE-2772](https://antbrains.atlassian.net/browse/KE-2772)** -Open AI extension: Mask log file to hide sensitive info

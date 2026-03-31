@@ -12,6 +12,9 @@
   - [Get AI Model Name](pages/GetAIModelName.md)
   - [Get LLM Capabilities](pages/GetLLMCapabilities.md)
 
+- **File Analysis**
+  - [Process Files](pages/ProcessFiles.md)
+
 - **Multi Modal Operations**
   - [Summarize Image](pages/SummarizeImage.md)
   - [Summarize Image from Base64 Encoded](pages/SummarizeImageFromBase64Encoded.md)

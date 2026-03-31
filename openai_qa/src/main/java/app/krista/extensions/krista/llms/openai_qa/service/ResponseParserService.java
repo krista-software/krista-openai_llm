@@ -45,7 +45,7 @@ public class ResponseParserService {
             JsonNode responseJson = OBJECT_MAPPER.readTree(responseBody);
             JsonNode choicesArray = responseJson.path("choices");
             
-            if (choicesArray.isArray() && choicesArray.size() > 0) {
+            if (choicesArray.isArray() && !choicesArray.isEmpty()) {
                 JsonNode firstChoice = choicesArray.get(0);
                 JsonNode message = firstChoice.path("message");
                 String content = message.path("content").asText();
@@ -77,7 +77,7 @@ public class ResponseParserService {
             
             if (outputArray.isArray() && !outputArray.isEmpty()) {
                 StringBuilder result = new StringBuilder();
-                
+
                 for (JsonNode outputItem : outputArray) {
                     JsonNode contentArray = outputItem.path("content");
                     if (contentArray.isArray()) {
@@ -123,6 +123,24 @@ public class ResponseParserService {
         }
     }
     
+    /**
+     * Extracts the error code from an OpenAI error response (e.g., "context_length_exceeded").
+     * Returns null if the code cannot be parsed.
+     */
+    public String extractErrorCode(String responseBody) {
+        try {
+            JsonNode responseJson = OBJECT_MAPPER.readTree(responseBody);
+            JsonNode codeNode = responseJson.path("error").path("code");
+            if (!codeNode.isMissingNode() && !codeNode.isNull()) {
+                String code = codeNode.asText();
+                return code.isEmpty() ? null : code;
+            }
+        } catch (IOException cause) {
+            logger.debug("Could not parse error code from response: {}", cause.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Extracts error message from error response
      */

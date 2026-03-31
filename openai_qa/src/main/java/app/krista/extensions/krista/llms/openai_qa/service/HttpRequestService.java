@@ -68,7 +68,6 @@ public class HttpRequestService {
      */
     public String sendChatCompletionsRequest(ObjectNode payload) throws OpenAiException {
         logger.info("Sending Chat Completions API request");
-        logger.debug("Chat Completions payload: {}", payload.toString());
         
         String responseBody = sendRequest(OpenAiConfiguration.OPENAI_CHAT_COMPLETIONS_API_URL, payload);
         return responseParser.parseChatCompletionsResponse(responseBody);
@@ -79,24 +78,69 @@ public class HttpRequestService {
      */
     public String sendResponsesApiRequest(ObjectNode payload) throws OpenAiException {
         logger.info("Sending Responses API request");
-        logger.debug("Responses API payload: {}", payload.toString());
         
         String responseBody = sendRequest(OpenAiConfiguration.OPENAI_RESPONSES_API_URL, payload);
         return responseParser.parseResponsesApiResponse(responseBody);
     }
     
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_DELAY_MS = 500;
+
     /**
-     * Generic method to send HTTP POST request to OpenAI API
+     * Sends HTTP POST request to OpenAI API with retry logic for transient failures.
+     * Retries on: network errors (IOException), rate limits (HTTP 429), server errors (HTTP 5xx).
+     * Does NOT retry on: client errors (4xx except 429) — these fail immediately.
      */
     private String sendRequest(String url, ObjectNode payload) throws OpenAiException {
         Request request = buildHttpRequest(url, payload);
-        
-        try (Response response = httpClient.newCall(request).execute()) {
-            return handleResponse(response);
-            
-        } catch (IOException cause) {
-            logger.error("Network error during API call to {}: {}", url, cause.getMessage());
-            throw new OpenAiException("Network error during API call: " + cause.getMessage(), cause);
+        IOException lastNetworkError = null;
+
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try (Response response = httpClient.newCall(request).execute()) {
+                int statusCode = response.code();
+
+                if (response.isSuccessful()) {
+                    return handleResponse(response);
+                }
+
+                // Rate limit or server error — retry
+                if (statusCode == 429 || statusCode >= 500) {
+                    logger.warn("Retryable error (HTTP {}) on attempt {}/{} to {}", statusCode, attempt, MAX_RETRIES, url);
+                    if (attempt < MAX_RETRIES) {
+                        pauseBeforeRetry(attempt);
+                        continue;
+                    }
+                }
+
+                // Client error (4xx except 429) — fail immediately, no retry
+                return handleErrorResponse(response);
+
+            } catch (IOException cause) {
+                lastNetworkError = cause;
+                logger.warn("Network error on attempt {}/{} to {}: {}", attempt, MAX_RETRIES, url, cause.getMessage());
+                if (attempt < MAX_RETRIES) {
+                    pauseBeforeRetry(attempt);
+                }
+            }
+        }
+
+        // All retries exhausted
+        logger.error("All {} attempts failed for {}", MAX_RETRIES, url);
+        throw new OpenAiException("Network error during API call after " + MAX_RETRIES + " attempts: "
+                + (lastNetworkError != null ? lastNetworkError.getMessage() : "unknown error"), lastNetworkError);
+    }
+
+    /**
+     * Pauses before retry with increasing delay.
+     */
+    private void pauseBeforeRetry(int attempt) {
+        try {
+            long delay = RETRY_DELAY_MS * attempt;
+            logger.debug("Waiting {}ms before retry", delay);
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warn("Retry delay interrupted");
         }
     }
     
@@ -137,16 +181,72 @@ public class HttpRequestService {
     }
     
     /**
-     * Handles error responses from OpenAI API
+     * Handles error responses from OpenAI API.
+     * Detects well-known error codes and provides user-friendly messages at INFO level.
+     * Unexpected errors are logged at ERROR level.
      */
     private String handleErrorResponse(Response response) throws OpenAiException, IOException {
         String errorBody = response.body() != null ? response.body().string() : "Unknown error";
+        String errorCode = responseParser.extractErrorCode(errorBody);
         String errorMessage = responseParser.extractErrorMessage(errorBody);
-        
-        logger.error("API call failed (HTTP {}): {}", response.code(), errorMessage);
-        
-        throw new OpenAiException(String.format("API call failed (HTTP %d): %s", 
-            response.code(), errorMessage));
+        int httpStatus = response.code();
+
+        String userFriendlyMessage = buildUserFriendlyMessage(httpStatus, errorCode, errorMessage);
+
+        if (isExpectedApiError(errorCode)) {
+            logger.info("API request rejected (HTTP {}): {} [code={}]", httpStatus, userFriendlyMessage, errorCode);
+        } else {
+            logger.error("API call failed (HTTP {}): {} [code={}]", httpStatus, errorMessage, errorCode);
+        }
+
+        throw new OpenAiException(userFriendlyMessage);
+    }
+
+    /**
+     * Returns true for error codes that represent expected, non-critical API rejections.
+     * These are logged at INFO level since they indicate user/input issues, not system failures.
+     */
+    private boolean isExpectedApiError(String errorCode) {
+        if (errorCode == null) return false;
+        switch (errorCode) {
+            case "context_length_exceeded":
+            case "rate_limit_exceeded":
+            case "invalid_api_key":
+            case "model_not_found":
+            case "invalid_image":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Builds a clear, actionable message for the end user based on the API error code.
+     */
+    private String buildUserFriendlyMessage(int httpStatus, String errorCode, String rawMessage) {
+        if (errorCode == null) {
+            return String.format("API call failed (HTTP %d): %s", httpStatus, rawMessage);
+        }
+
+        switch (errorCode) {
+            case "context_length_exceeded":
+                return "The uploaded file(s) exceed the context window of the selected model. "
+                        + "Try using a model with a larger context (e.g., gpt-4.1 supports 1M tokens), "
+                        + "upload a smaller file, or split the document into smaller parts.";
+            case "rate_limit_exceeded":
+                return "OpenAI rate limit reached. Please wait a moment and try again.";
+            case "invalid_api_key":
+                return "The configured OpenAI API key is invalid. "
+                        + "Please update the API key in the extension settings.";
+            case "model_not_found":
+                return "The selected model is not available. "
+                        + "Please choose a different model in the extension settings.";
+            case "invalid_image":
+                return "One or more uploaded images could not be processed. "
+                        + "Please ensure images are valid JPG, PNG, GIF, or WebP files.";
+            default:
+                return String.format("API call failed (HTTP %d): %s", httpStatus, rawMessage);
+        }
     }
     
     /**

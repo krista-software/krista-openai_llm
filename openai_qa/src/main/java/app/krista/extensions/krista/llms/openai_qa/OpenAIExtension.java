@@ -86,7 +86,7 @@ import static app.krista.extensions.krista.llms.openai_qa.catalog.Constants.CONN
  * @see OpenAIConstants for configuration constants
  */
 @Java(version = Java.Version.JAVA_21)
-@Extension(version = "2.1.7", jaxrsId = "openai", name = "Open AI")
+@Extension(version = "2.1.8", jaxrsId = "openai", name = "Open AI")
 @Field.Text(value = OpenAIConstants.API_KEY, isSecured = true)
 @Field.PickOne(value = OpenAIConstants.MODEL, values = {OpenAIConstants.GPT_35, OpenAIConstants.GPT_4, OpenAIConstants.GPT_LATEST, OpenAIConstants.GPT_4_1_NANO, OpenAIConstants.GPT_4_1_MINI, OpenAIConstants.GPT_4_1})
 @StaticResource(path = "docs", file = "docs")
