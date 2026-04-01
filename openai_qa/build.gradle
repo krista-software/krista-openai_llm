@@ -59,8 +59,8 @@ configurations {
 
 
 dependencies {
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.118'
-    implementation 'app.krista:krista-apis:1.0.118'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.121'
+    implementation 'app.krista:krista-apis:1.0.121'
     implementation 'com.theokanning.openai-gpt3-java:service:0.14.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
@@ -75,6 +75,7 @@ dependencies {
 
     // Test dependencies
     testImplementation 'com.kristasoft.common:common-test:1.0.37'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testImplementation 'org.mockito:mockito-core:5.18.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.18.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'

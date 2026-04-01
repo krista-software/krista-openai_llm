@@ -43,6 +43,8 @@ public class OpenAiConfiguration {
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_MAX_TOKENS = "max_tokens";
     public static final String PARAM_TEMPERATURE = "temperature";
+    public static final String PARAM_TRUNCATION = "truncation";
+    public static final String TRUNCATION_AUTO = "auto";
 
     // Request Values
     public static final String VALUE_ASSISTANTS = "assistants";
@@ -50,7 +52,12 @@ public class OpenAiConfiguration {
     public static final String ROLE_USER = "user";
     public static final String TYPE_INPUT_FILE = "input_file";
     public static final String TYPE_INPUT_TEXT = "input_text";
-    
+    public static final String TYPE_INPUT_IMAGE = "input_image";
+
+    // File Analysis Limits
+    public static final int MAX_FILES_PER_REQUEST = 20;
+    public static final long MAX_TOTAL_FILE_SIZE_BYTES = 50L * 1024 * 1024; // 50MB OpenAI limit
+
     // HTTP Headers
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_AUTHORIZATION = "Authorization";
@@ -93,8 +100,12 @@ public class OpenAiConfiguration {
     // Valid OpenAI Models
     public static final String DEFAULT_MODEL = "gpt-4o";
     public static final String[] VALID_MODELS = {
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "gpt-4.1-nano",
         "gpt-4o",
         "gpt-4o-mini",
+        "chatgpt-4o-latest",
         "gpt-4o-2024-11-20",
         "gpt-4o-2024-08-06",
         "gpt-4o-2024-05-13",

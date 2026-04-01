@@ -65,23 +65,43 @@ public class FileUploadService {
     }
 
     /**
-     * Uploads file to OpenAI Files API
+     * Uploads file to OpenAI Files API (PDF only, existing behavior)
      */
     public String uploadFile(byte[] fileBytes, String fileName) throws OpenAiException {
-        // Validate file before upload
         fileValidationService.validateFile(fileBytes, fileName);
-        
+        return doUpload(fileBytes, fileName, true);
+    }
+
+    /**
+     * Uploads any supported file to OpenAI Files API with dynamic MIME type detection.
+     * Validates bytes/name but does NOT enforce PDF-only extension.
+     * Includes a 1-second post-upload delay for legacy (inline input_file) callers.
+     */
+    public String uploadFileGeneric(byte[] fileBytes, String fileName) throws OpenAiException {
+        fileValidationService.validateFileGeneric(fileBytes, fileName);
+        return doUpload(fileBytes, fileName, true);
+    }
+
+    /**
+     * Uploads any supported file to OpenAI Files API without a post-upload delay.
+     * Use this when the caller handles readiness polling separately
+     * (e.g., vector store file indexing polls for completion).
+     */
+    public String uploadFileGenericNoDelay(byte[] fileBytes, String fileName) throws OpenAiException {
+        fileValidationService.validateFileGeneric(fileBytes, fileName);
+        return doUpload(fileBytes, fileName, false);
+    }
+
+    private String doUpload(byte[] fileBytes, String fileName, boolean waitAfterUpload) throws OpenAiException {
         logger.debug("Uploading file to OpenAI: {}", fileName);
-        
+
         try {
             String fileId = performUpload(fileBytes, fileName);
-            
-            // Wait for file processing
-            waitForFileProcessing();
-            
+            if (waitAfterUpload) {
+                waitForFileProcessing();
+            }
             logger.info("Successfully uploaded file: {} (ID: {})", fileName, fileId);
             return fileId;
-            
         } catch (IOException cause) {
             logger.error("Failed to upload file: {}", fileName, cause);
             throw new OpenAiException("File upload failed: " + cause.getMessage(), cause);
@@ -92,13 +112,13 @@ public class FileUploadService {
         MultipartBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart(OpenAiConfiguration.PARAM_PURPOSE, OpenAiConfiguration.VALUE_ASSISTANTS)
-                .addFormDataPart("file", fileName, 
-                    RequestBody.create(MediaType.parse(OpenAiConfiguration.PDF_MIME_TYPE), fileBytes))
+                .addFormDataPart("file", fileName,
+                    RequestBody.create(MediaType.parse(FileTypeClassifier.getMimeType(fileName)), fileBytes))
                 .build();
 
-        // Get API key and validate
         String apiKey = openAiAttributes.getApiKey().trim();
-        logger.debug("Using API key for file upload: {}", apiKey != null ? apiKey : "null");
+        logger.debug("API key configured for file upload: {}", apiKey != null && apiKey.length() > 8
+                ? apiKey.substring(0, 8) + "..." : "not set");
 
         Request request = new Request.Builder()
                 .url(OpenAiConfiguration.OPENAI_FILES_API_URL)

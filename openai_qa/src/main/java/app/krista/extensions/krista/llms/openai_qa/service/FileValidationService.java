@@ -36,6 +36,23 @@ public class FileValidationService {
         validateFileSize(fileBytes);
     }
     
+    /**
+     * Validates file for generic (non-PDF-only) upload.
+     * Checks bytes not empty, file name not empty, and size within limit.
+     * Does NOT enforce PDF-only extension.
+     */
+    public void validateFileGeneric(byte[] fileBytes, String fileName) throws OpenAiException {
+        validateFileBytes(fileBytes);
+        validateFileName(fileName);
+        validateFileSize(fileBytes);
+    }
+
+    private void validateFileName(String fileName) throws OpenAiException {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            throw new OpenAiException("File name cannot be empty");
+        }
+    }
+
     private void validateFileBytes(byte[] fileBytes) throws OpenAiException {
         if (fileBytes == null || fileBytes.length == 0) {
             throw new OpenAiException("File cannot be empty");

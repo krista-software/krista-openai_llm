@@ -91,6 +91,15 @@ class OpenAiConfigurationTest {
         }
 
         @Test
+        @DisplayName("Should return true for GPT-4.1 family models")
+        void shouldReturnTrueForGpt41FamilyModels() {
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1"));
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1-mini"));
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1-nano"));
+            assertTrue(OpenAiConfiguration.isValidModel("chatgpt-4o-latest"));
+        }
+
+        @Test
         @DisplayName("Should return false for null model")
         void shouldReturnFalseForNullModel() {
             assertFalse(OpenAiConfiguration.isValidModel(null));
