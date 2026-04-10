@@ -65,10 +65,12 @@ import static app.krista.extensions.krista.llms.openai_qa.catalog.Constants.CONN
  * <ul>
  *   <li>{@link OpenAIConstants#GPT_35} - ChatGPT 3.5 Turbo</li>
  *   <li>{@link OpenAIConstants#GPT_4} - ChatGPT 4</li>
- *   <li>{@link OpenAIConstants#GPT_LATEST} - ChatGPT 4 Latest</li>
  *   <li>{@link OpenAIConstants#GPT_4_1_NANO} - ChatGPT 4.1 Nano</li>
  *   <li>{@link OpenAIConstants#GPT_4_1_MINI} - ChatGPT 4.1 Mini</li>
  *   <li>{@link OpenAIConstants#GPT_4_1} - ChatGPT 4.1</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4} - ChatGPT 5.4</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4_MINI} - ChatGPT 5.4 Mini</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4_NANO} - ChatGPT 5.4 Nano</li>
  * </ul>
  *
  * <h3>Extension Lifecycle:</h3>
@@ -80,15 +82,15 @@ import static app.krista.extensions.krista.llms.openai_qa.catalog.Constants.CONN
  * </ul>
  *
  * @author Krista Extensions Team
- * @version 2.1.5
+ * @version 2.1.9
  * @since 1.0.0
  * @see QueryImpl for core AI query functionality
  * @see OpenAIConstants for configuration constants
  */
 @Java(version = Java.Version.JAVA_21)
-@Extension(version = "2.1.8", jaxrsId = "openai", name = "Open AI")
+@Extension(version = "2.1.9", jaxrsId = "openai", name = "Open AI")
 @Field.Text(value = OpenAIConstants.API_KEY, isSecured = true)
-@Field.PickOne(value = OpenAIConstants.MODEL, values = {OpenAIConstants.GPT_35, OpenAIConstants.GPT_4, OpenAIConstants.GPT_LATEST, OpenAIConstants.GPT_4_1_NANO, OpenAIConstants.GPT_4_1_MINI, OpenAIConstants.GPT_4_1})
+@Field.PickOne(value = OpenAIConstants.MODEL, values = {OpenAIConstants.GPT_35, OpenAIConstants.GPT_4, OpenAIConstants.GPT_4_1_NANO, OpenAIConstants.GPT_4_1_MINI, OpenAIConstants.GPT_4_1, OpenAIConstants.GPT_5_4, OpenAIConstants.GPT_5_4_MINI, OpenAIConstants.GPT_5_4_NANO})
 @StaticResource(path = "docs", file = "docs")
 @ChangeLog(file = "openai_qa/src/main/resources/docs")
 public class OpenAIExtension {

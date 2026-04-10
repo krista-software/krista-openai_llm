@@ -51,10 +51,12 @@ class OpenAIConstantsTest {
     void testGptModelConstants() {
         assertEquals("ChatGPT 3.5", OpenAIConstants.GPT_35);
         assertEquals("ChatGPT 4", OpenAIConstants.GPT_4);
-        assertEquals("ChatGPT 4 Latest", OpenAIConstants.GPT_LATEST);
         assertEquals("ChatGPT 4.1 Nano", OpenAIConstants.GPT_4_1_NANO);
         assertEquals("ChatGPT 4.1 Mini", OpenAIConstants.GPT_4_1_MINI);
         assertEquals("ChatGPT 4.1", OpenAIConstants.GPT_4_1);
+        assertEquals("ChatGPT 5.4", OpenAIConstants.GPT_5_4);
+        assertEquals("ChatGPT 5.4 Mini", OpenAIConstants.GPT_5_4_MINI);
+        assertEquals("ChatGPT 5.4 Nano", OpenAIConstants.GPT_5_4_NANO);
     }
 
     @Test
@@ -68,10 +70,12 @@ class OpenAIConstantsTest {
     void testVersionConstants() {
         assertEquals("4", OpenAIConstants.VERSION_4);
         assertEquals("3.5", OpenAIConstants.VERSION_35);
-        assertEquals("4 Latest", OpenAIConstants.VERSION_4_LATEST);
         assertEquals("4.1 Mini", OpenAIConstants.VERSION_4_1_MINI);
         assertEquals("4.1 Nano", OpenAIConstants.VERSION_4_1_NANO);
         assertEquals("4.1", OpenAIConstants.VERSION_4_1);
+        assertEquals("5.4", OpenAIConstants.VERSION_5_4);
+        assertEquals("5.4 Mini", OpenAIConstants.VERSION_5_4_MINI);
+        assertEquals("5.4 Nano", OpenAIConstants.VERSION_5_4_NANO);
     }
 
     @Test
@@ -115,10 +119,12 @@ class OpenAIConstantsTest {
         List<String> models = Arrays.asList(
             OpenAIConstants.GPT_35,
             OpenAIConstants.GPT_4,
-            OpenAIConstants.GPT_LATEST,
             OpenAIConstants.GPT_4_1_NANO,
             OpenAIConstants.GPT_4_1_MINI,
-            OpenAIConstants.GPT_4_1
+            OpenAIConstants.GPT_4_1,
+            OpenAIConstants.GPT_5_4,
+            OpenAIConstants.GPT_5_4_MINI,
+            OpenAIConstants.GPT_5_4_NANO
         );
 
         for (String model : models) {
@@ -135,10 +141,12 @@ class OpenAIConstantsTest {
         List<String> versions = Arrays.asList(
             OpenAIConstants.VERSION_4,
             OpenAIConstants.VERSION_35,
-            OpenAIConstants.VERSION_4_LATEST,
             OpenAIConstants.VERSION_4_1_MINI,
             OpenAIConstants.VERSION_4_1_NANO,
-            OpenAIConstants.VERSION_4_1
+            OpenAIConstants.VERSION_4_1,
+            OpenAIConstants.VERSION_5_4,
+            OpenAIConstants.VERSION_5_4_MINI,
+            OpenAIConstants.VERSION_5_4_NANO
         );
 
         for (String version : versions) {

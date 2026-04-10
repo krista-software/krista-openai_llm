@@ -190,8 +190,10 @@ public String getAIModel() {
 ### Model Mapping
 - **ChatGPT 4** → "OpenAI ChatGPT 4"
 - **ChatGPT 3.5** → "OpenAI ChatGPT 3.5"
-- **ChatGPT 4 Latest** → "OpenAI ChatGPT 3.5" (fallback)
 - **ChatGPT 4.1 Mini** → "OpenAI ChatGPT 3.5" (fallback)
+- **ChatGPT 5.4** → "OpenAI ChatGPT 3.5" (fallback)
+- **ChatGPT 5.4 Mini** → "OpenAI ChatGPT 3.5" (fallback)
+- **ChatGPT 5.4 Nano** → "OpenAI ChatGPT 3.5" (fallback)
 
 ### Telemetry Metrics
 - **MODEL_NAME_REQUESTED**: Request initiated

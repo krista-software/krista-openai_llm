@@ -199,6 +199,7 @@ public class QueryArea {
             return handleExceptionResponse("getting LLM capabilities", cause);
         }
     }
+
     /**
      * Ask a question from discussion - Main catalog request for document-based Q&A.
      *

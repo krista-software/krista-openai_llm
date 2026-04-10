@@ -73,15 +73,16 @@ Before diving into specific issues, run through this quick checklist:
 1. **Select a Model**:
    - Go to Extension Configuration
    - Choose from available models:
-     - ChatGPT 3.5 (fastest, most cost-effective)
-     - ChatGPT 4 (higher quality responses)
-     - ChatGPT 4 Latest (newest features)
-     - ChatGPT 4.1 Mini (balanced performance)
+     - ChatGPT 3.5 (legacy, cost-effective)
+     - ChatGPT 4 (GPT-4o, advanced reasoning)
+     - ChatGPT 4.1 Nano / Mini / Full (1M context)
+     - ChatGPT 5.4 / 5.4 Mini / 5.4 Nano (frontier models)
 
 2. **Model Recommendations**:
-   - **For simple queries**: ChatGPT 3.5 or ChatGPT 4.1 Mini
-   - **For complex analysis**: ChatGPT 4 or ChatGPT 4 Latest
-   - **For image processing**: ChatGPT 4 or ChatGPT 4 Latest
+   - **For simple queries**: ChatGPT 4.1 Nano or ChatGPT 5.4 Nano
+   - **For complex analysis**: ChatGPT 5.4 or ChatGPT 4.1
+   - **For image processing**: ChatGPT 5.4 or ChatGPT 5.4 Mini
+   - **For high-volume tasks**: ChatGPT 5.4 Nano or ChatGPT 4.1 Nano
 
 ## Request Processing Issues
 

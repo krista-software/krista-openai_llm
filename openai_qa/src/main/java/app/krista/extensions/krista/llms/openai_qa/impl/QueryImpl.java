@@ -132,14 +132,26 @@ public class QueryImpl {
     /** Model identifier for GPT-4. */
     private static final String GPT_4 = "gpt-4";
 
+    /** Model identifier for GPT-4.1. */
+    private static final String GPT_4_1 = "gpt-4.1";
+
     /** Model identifier for GPT-4.1 Mini. */
     private static final String GPT_4_1_MINI = "gpt-4.1-mini";
+
+    /** Model identifier for GPT-4.1 Nano. */
+    private static final String GPT_4_1_NANO = "gpt-4.1-nano";
 
     /** Model identifier for GPT-3.5 Turbo 16K. */
     private static final String GPT_35_TURBO_16K = "gpt-3.5-turbo-16k";
 
-    /** Model identifier for GPT-4 Latest. */
-    private static final String GPT_4_LATEST = "chatgpt-4o-latest";
+    /** Model identifier for GPT-5.4. */
+    private static final String GPT_5_4 = "gpt-5.4";
+
+    /** Model identifier for GPT-5.4 Mini. */
+    private static final String GPT_5_4_MINI = "gpt-5.4-mini";
+
+    /** Model identifier for GPT-5.4 Nano. */
+    private static final String GPT_5_4_NANO = "gpt-5.4-nano";
 
     /** Shared HTTP client instance for API requests. */
     private static OkHttpClient client = null;
@@ -163,26 +175,17 @@ public class QueryImpl {
     static private final int MAX_RESPONSE_TOKENS = 2064;
 
     /**
-     * Maps user-friendly model display names to OpenAI API model identifiers.
-     *
-     * <p>This method translates the model names shown in the UI (from {@link OpenAIConstants})
-     * to the actual model identifiers required by the OpenAI API. When image processing is
-     * required, it automatically selects a vision-capable model.</p>
-     *
-     * <h3>Model Mapping:</h3>
-     * <ul>
-     *   <li>{@link OpenAIConstants#GPT_4} → "gpt-4"</li>
-     *   <li>{@link OpenAIConstants#GPT_35} → "gpt-3.5-turbo-16k"</li>
-     *   <li>{@link OpenAIConstants#GPT_LATEST} → "chatgpt-4o-latest"</li>
-     *   <li>Default → "gpt-4.1-mini"</li>
-     *   <li>Any model with image → "gpt-4o-mini" (vision-capable)</li>
-     * </ul>
-     *
-     * @param modelDisplayName The user-friendly model name from the UI selection
-     * @param withImage {@code true} if the request includes image processing, {@code false} otherwise
-     * @return The OpenAI API model identifier string
-     * @see OpenAIConstants for display name constants
+     * Determines the correct token limit parameter name for the given model.
+     * Newer models (gpt-4.1+, gpt-5.4+) require "max_completion_tokens",
+     * while older models use "max_tokens".
      */
+    private static String getTokenParamName(String resolvedModelName) {
+        if (resolvedModelName.startsWith("gpt-4.1") || resolvedModelName.startsWith("gpt-5.4")) {
+            return "max_completion_tokens";
+        }
+        return "max_tokens";
+    }
+
     private String getModelName(String modelDisplayName, boolean withImage) {
         if (withImage) {
             return GPT_4_VISSION_PREVIEW;
@@ -190,7 +193,12 @@ public class QueryImpl {
         return switch (modelDisplayName) {
             case OpenAIConstants.GPT_4 -> GPT_4;
             case OpenAIConstants.GPT_35 -> GPT_35_TURBO_16K;
-            case OpenAIConstants.GPT_LATEST -> GPT_4_LATEST;
+            case OpenAIConstants.GPT_4_1 -> GPT_4_1;
+            case OpenAIConstants.GPT_4_1_MINI -> GPT_4_1_MINI;
+            case OpenAIConstants.GPT_4_1_NANO -> GPT_4_1_NANO;
+            case OpenAIConstants.GPT_5_4 -> GPT_5_4;
+            case OpenAIConstants.GPT_5_4_MINI -> GPT_5_4_MINI;
+            case OpenAIConstants.GPT_5_4_NANO -> GPT_5_4_NANO;
             default -> GPT_4_1_MINI;
         };
     }
@@ -428,11 +436,11 @@ public class QueryImpl {
             if (tokensUsed < BALANCED_INPUT_OUT_TOKENS)
                 responseTokens = BALANCED_INPUT_OUT_TOKENS;
             else
-                responseTokens = resolvedModelName.equalsIgnoreCase(GPT_4_LATEST) ? 16000 : MAX_RESPONSE_TOKENS;
+                responseTokens = MAX_RESPONSE_TOKENS;
 
             json.addProperty("temperature", PRECISE_TEMP);
             json.addProperty("top_p", PRECISE_TOPP);
-            json.addProperty("max_tokens", responseTokens);
+            json.addProperty(getTokenParamName(resolvedModelName), responseTokens);
             return json.toString();
         } catch (JsonSyntaxException cause) {
             throw new IllegalArgumentException("Input prompt was not in the correct format!");
@@ -476,10 +484,12 @@ public class QueryImpl {
      * <ul>
      *   <li>"ChatGPT 4"</li>
      *   <li>"ChatGPT 3.5"</li>
-     *   <li>"ChatGPT 4 Latest"</li>
      *   <li>"ChatGPT 4.1 Mini"</li>
      *   <li>"ChatGPT 4.1 Nano"</li>
      *   <li>"ChatGPT 4.1"</li>
+     *   <li>"ChatGPT 5.4"</li>
+     *   <li>"ChatGPT 5.4 Mini"</li>
+     *   <li>"ChatGPT 5.4 Nano"</li>
      * </ul>
      *
      * @return The exact model name selected by the user. Returns
@@ -515,8 +525,14 @@ public class QueryImpl {
             case OpenAIConstants.GPT_35 -> {
                 return OpenAIConstants.GPT_35;
             }
-            case OpenAIConstants.GPT_LATEST -> {
-                return OpenAIConstants.GPT_LATEST;
+            case OpenAIConstants.GPT_5_4 -> {
+                return OpenAIConstants.GPT_5_4;
+            }
+            case OpenAIConstants.GPT_5_4_MINI -> {
+                return OpenAIConstants.GPT_5_4_MINI;
+            }
+            case OpenAIConstants.GPT_5_4_NANO -> {
+                return OpenAIConstants.GPT_5_4_NANO;
             }
             case OpenAIConstants.GPT_4_1_MINI -> {
                 return OpenAIConstants.GPT_4_1_MINI;
@@ -1175,16 +1191,17 @@ public class QueryImpl {
 
             json.addProperty("top_p", Objects.requireNonNullElse(topP, PRECISE_TOPP));
 
+            String tokenParam = getTokenParamName(resolvedModelName);
             if (maxTokens != null) {
-                json.addProperty("max_tokens", maxTokens.intValue());
+                json.addProperty(tokenParam, maxTokens.intValue());
             } else {
                 int tokensUsed = rawDocumentJson.length() / 3;
                 int responseTokens;
                 if (tokensUsed < BALANCED_INPUT_OUT_TOKENS)
                     responseTokens = BALANCED_INPUT_OUT_TOKENS;
                 else
-                    responseTokens = resolvedModelName.equalsIgnoreCase(GPT_4_LATEST) ? 16000 : MAX_RESPONSE_TOKENS;
-                json.addProperty("max_tokens", responseTokens);
+                    responseTokens = MAX_RESPONSE_TOKENS;
+                json.addProperty(tokenParam, responseTokens);
             }
 
             // Note: OpenAI API doesn't support top_k parameter, so we'll ignore it

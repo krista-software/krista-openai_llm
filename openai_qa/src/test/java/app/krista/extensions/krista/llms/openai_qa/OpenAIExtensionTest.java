@@ -219,10 +219,12 @@ class OpenAIExtensionTest {
         String[] supportedModels = {
             OpenAIConstants.GPT_35,
             OpenAIConstants.GPT_4,
-            OpenAIConstants.GPT_LATEST,
             OpenAIConstants.GPT_4_1_NANO,
             OpenAIConstants.GPT_4_1_MINI,
-            OpenAIConstants.GPT_4_1
+            OpenAIConstants.GPT_4_1,
+            OpenAIConstants.GPT_5_4,
+            OpenAIConstants.GPT_5_4_MINI,
+            OpenAIConstants.GPT_5_4_NANO
         };
 
         // Mock the execute method to simulate successful connection
@@ -477,10 +479,12 @@ class OpenAIExtensionTest {
             String[] supportedModels = {
                 OpenAIConstants.GPT_35,
                 OpenAIConstants.GPT_4,
-                OpenAIConstants.GPT_LATEST,
                 OpenAIConstants.GPT_4_1_NANO,
                 OpenAIConstants.GPT_4_1_MINI,
-                OpenAIConstants.GPT_4_1
+                OpenAIConstants.GPT_4_1,
+                OpenAIConstants.GPT_5_4,
+                OpenAIConstants.GPT_5_4_MINI,
+                OpenAIConstants.GPT_5_4_NANO
             };
 
             when(mockApiKeyProvider.get()).thenReturn("sk-test-api-key-12345");
@@ -647,10 +651,12 @@ class OpenAIExtensionTest {
             String[] expectedValues = {
                 OpenAIConstants.GPT_35,
                 OpenAIConstants.GPT_4,
-                OpenAIConstants.GPT_LATEST,
                 OpenAIConstants.GPT_4_1_NANO,
                 OpenAIConstants.GPT_4_1_MINI,
-                OpenAIConstants.GPT_4_1
+                OpenAIConstants.GPT_4_1,
+                OpenAIConstants.GPT_5_4,
+                OpenAIConstants.GPT_5_4_MINI,
+                OpenAIConstants.GPT_5_4_NANO
             };
 
             assertArrayEquals(expectedValues, annotation.values());

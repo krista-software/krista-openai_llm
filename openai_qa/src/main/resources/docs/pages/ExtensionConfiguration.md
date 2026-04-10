@@ -15,10 +15,14 @@ The OpenAI Extension requires configuration of your API key and model selection 
 
 | Model Option | Description | Use Case |
 |--------------|-------------|----------|
-| ChatGPT 3.5 | Fast, cost-effective model | General queries, simple tasks |
+| ChatGPT 3.5 | Fast, cost-effective model (Legacy) | General queries, simple tasks |
 | ChatGPT 4 | Advanced reasoning capabilities | Complex analysis, detailed responses |
-| ChatGPT 4 Latest | Most recent GPT-4 model | Latest features and improvements |
-| ChatGPT 4.1 Mini | Lightweight version of GPT-4 | Quick responses, efficient processing |
+| ChatGPT 4.1 Nano | Fastest GPT-4.1, ultra low-cost | Classification, data extraction, simple tasks |
+| ChatGPT 4.1 Mini | Balanced GPT-4.1, low-cost | Quick responses, efficient processing |
+| ChatGPT 4.1 | Full GPT-4.1, 1M context | Complex analysis, long documents |
+| ChatGPT 5.4 | Frontier model, 1M context | Complex professional work, advanced reasoning |
+| ChatGPT 5.4 Mini | Capable small model, 400K context | Coding, computer use, subagents |
+| ChatGPT 5.4 Nano | Cheapest GPT-5.4-class model | High-volume tasks, classification, ranking |
 
 ## Step-by-Step Setup
 
@@ -48,10 +52,14 @@ The OpenAI Extension requires configuration of your API key and model selection 
 ### Step 4: Select Model
 
 1. Choose your preferred model from the **Model Name** dropdown:
-   - **ChatGPT 3.5**: Best for general use and cost efficiency
-   - **ChatGPT 4**: Recommended for complex tasks requiring advanced reasoning
-   - **ChatGPT 4 Latest**: Access to the newest GPT-4 features
-   - **ChatGPT 4.1 Mini**: Optimized for speed and efficiency
+   - **ChatGPT 3.5**: Legacy model, general use
+   - **ChatGPT 4**: GPT-4o, advanced reasoning
+   - **ChatGPT 4.1 Nano**: Ultra low-cost, fastest GPT-4.1
+   - **ChatGPT 4.1 Mini**: Balanced performance and cost
+   - **ChatGPT 4.1**: Full GPT-4.1 with 1M context
+   - **ChatGPT 5.4**: Frontier model for complex professional work
+   - **ChatGPT 5.4 Mini**: Best small model for coding and subagents
+   - **ChatGPT 5.4 Nano**: Cheapest, fastest for high-volume tasks
 
 ### Step 5: Validate Configuration
 
