@@ -6,7 +6,7 @@ The OpenAI Extension enables Krista to connect with OpenAI's powerful language m
 
 ## Key Features
 
-✅ **Multiple Model Support**: Access to ChatGPT 3.5, ChatGPT 4, ChatGPT 4 Latest, and ChatGPT 4.1 Mini
+✅ **Multiple Model Support**: Access to ChatGPT 3.5, ChatGPT 4, ChatGPT 5.4, and ChatGPT 4.1 Mini, ChatGPT 5.4 Mini, ChatGPT 5.4 Nano
 ✅ **Text Generation**: Query AI models with custom prompts and context
 ✅ **Image Analysis**: Analyze images, answer questions about visual content, and generate summaries
 ✅ **Image Generation**: Create images from text prompts using DALL-E
@@ -51,7 +51,7 @@ The OpenAI Extension enables Krista to connect with OpenAI's powerful language m
 
 - **Extension Version**: 2.1.3-rc1
 - **OpenAI API**: [https://api.openai.com/](https://api.openai.com/)
-- **Supported Models**: ChatGPT 3.5, ChatGPT 4, ChatGPT 4 Latest, ChatGPT 4.1 Mini
+- **Supported Models**: ChatGPT 3.5, ChatGPT 4, ChatGPT 5.4, ChatGPT 4.1 Mini, ChatGPT 5.4 Mini, ChatGPT 5.4 Nano
 - **Documentation**: Complete guides for all catalog requests and configuration options
 
 ## Getting Help

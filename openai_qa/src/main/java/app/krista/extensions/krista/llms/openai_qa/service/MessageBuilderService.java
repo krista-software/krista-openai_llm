@@ -187,7 +187,7 @@ public class MessageBuilderService {
         ObjectNode payload = OBJECT_MAPPER.createObjectNode();
         payload.put(OpenAiConfiguration.PARAM_MODEL, model);
         payload.set(OpenAiConfiguration.PARAM_MESSAGES, messagesArray);
-        payload.put(OpenAiConfiguration.PARAM_MAX_TOKENS, OpenAiConfiguration.MAX_TOKENS);
+        payload.put(OpenAiConfiguration.getTokenParamForModel(model), OpenAiConfiguration.MAX_TOKENS);
         payload.put(OpenAiConfiguration.PARAM_TEMPERATURE, OpenAiConfiguration.TEMPERATURE);
         return payload;
     }

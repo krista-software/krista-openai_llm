@@ -126,8 +126,10 @@ public class FileAnalysisArea {
                 case OpenAIConstants.GPT_4_1 -> "gpt-4.1";
                 case OpenAIConstants.GPT_4_1_MINI -> "gpt-4.1-mini";
                 case OpenAIConstants.GPT_4_1_NANO -> "gpt-4.1-nano";
-                case OpenAIConstants.GPT_LATEST -> "chatgpt-4o-latest";
                 case OpenAIConstants.GPT_4 -> "gpt-4o";
+                case OpenAIConstants.GPT_5_4 -> "gpt-5.4";
+                case OpenAIConstants.GPT_5_4_MINI -> "gpt-5.4-mini";
+                case OpenAIConstants.GPT_5_4_NANO -> "gpt-5.4-nano";
                 case OpenAIConstants.GPT_35 -> "gpt-3.5-turbo";
                 default -> modelStr;
             };

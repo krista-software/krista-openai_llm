@@ -61,13 +61,33 @@ class QueryImplTest {
     }
 
     @Test
-    @DisplayName("Should return 'ChatGPT 4 Latest' for GPT_LATEST model")
-    void testGetAIModelDisplayName_GPTLatest() {
+    @DisplayName("Should return 'ChatGPT 5.4' for GPT_5_4 model")
+    void testGetAIModelDisplayName_GPT54() {
         // Arrange & Act
-        String result = queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_LATEST);
+        String result = queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4);
 
         // Assert
-        assertEquals("ChatGPT 4 Latest", result);
+        assertEquals("ChatGPT 5.4", result);
+    }
+
+    @Test
+    @DisplayName("Should return 'ChatGPT 5.4 Mini' for GPT_5_4_MINI model")
+    void testGetAIModelDisplayName_GPT54Mini() {
+        // Arrange & Act
+        String result = queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4_MINI);
+
+        // Assert
+        assertEquals("ChatGPT 5.4 Mini", result);
+    }
+
+    @Test
+    @DisplayName("Should return 'ChatGPT 5.4 Nano' for GPT_5_4_NANO model")
+    void testGetAIModelDisplayName_GPT54Nano() {
+        // Arrange & Act
+        String result = queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4_NANO);
+
+        // Assert
+        assertEquals("ChatGPT 5.4 Nano", result);
     }
 
     @Test
@@ -141,9 +161,17 @@ class QueryImplTest {
         assertEquals("ChatGPT 3.5",
             queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_35));
 
-        // Test GPT_LATEST
-        assertEquals("ChatGPT 4 Latest",
-            queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_LATEST));
+        // Test GPT_5_4
+        assertEquals("ChatGPT 5.4",
+            queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4));
+
+        // Test GPT_5_4_MINI
+        assertEquals("ChatGPT 5.4 Mini",
+            queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4_MINI));
+
+        // Test GPT_5_4_NANO
+        assertEquals("ChatGPT 5.4 Nano",
+            queryImpl.getAIModelDisplayName(OpenAIConstants.GPT_5_4_NANO));
 
         // Test GPT_4_1_MINI
         assertEquals("ChatGPT 4.1 Mini",
@@ -181,7 +209,9 @@ class QueryImplTest {
             "GPT-4",
             OpenAIConstants.GPT_4,
             OpenAIConstants.GPT_35,
-            OpenAIConstants.GPT_LATEST,
+            OpenAIConstants.GPT_5_4,
+            OpenAIConstants.GPT_5_4_MINI,
+            OpenAIConstants.GPT_5_4_NANO,
             OpenAIConstants.GPT_4_1_MINI
         };
 

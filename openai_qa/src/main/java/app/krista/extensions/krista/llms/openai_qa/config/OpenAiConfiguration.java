@@ -42,6 +42,7 @@ public class OpenAiConfiguration {
     public static final String PARAM_FILE_ID = "file_id";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_MAX_TOKENS = "max_tokens";
+    public static final String PARAM_MAX_COMPLETION_TOKENS = "max_completion_tokens";
     public static final String PARAM_TEMPERATURE = "temperature";
     public static final String PARAM_TRUNCATION = "truncation";
     public static final String TRUNCATION_AUTO = "auto";
@@ -75,6 +76,7 @@ public class OpenAiConfiguration {
     // Business Rules - Updated to OpenAI API limits
     public static final int MAX_TOKENS_GPT_4O = 16384; // gpt-4o max output
     public static final int MAX_TOKENS_GPT_4_1 = 32768; // gpt-4.1 max output
+    public static final int MAX_TOKENS_GPT_5_4 = 128000; // gpt-5.4 max output
     public static final int MAX_TOKENS_GPT_35 = 4096; // gpt-3.5-turbo max output
     public static final int DEFAULT_MAX_TOKENS = 16384; // Default for most models
     public static final int MAX_TOKENS = DEFAULT_MAX_TOKENS; // Backward compatibility
@@ -105,7 +107,9 @@ public class OpenAiConfiguration {
         "gpt-4.1-nano",
         "gpt-4o",
         "gpt-4o-mini",
-        "chatgpt-4o-latest",
+        "gpt-5.4",
+        "gpt-5.4-mini",
+        "gpt-5.4-nano",
         "gpt-4o-2024-11-20",
         "gpt-4o-2024-08-06",
         "gpt-4o-2024-05-13",
@@ -121,6 +125,18 @@ public class OpenAiConfiguration {
         "gpt-3.5-turbo-0125",
         "gpt-3.5-turbo-1106"
     };
+
+    /**
+     * Returns the correct token limit parameter name for the given model.
+     * Newer models (gpt-4.1+, gpt-5.4+) require "max_completion_tokens",
+     * while older models use "max_tokens".
+     */
+    public static String getTokenParamForModel(String model) {
+        if (model != null && (model.startsWith("gpt-4.1") || model.startsWith("gpt-5.4"))) {
+            return PARAM_MAX_COMPLETION_TOKENS;
+        }
+        return PARAM_MAX_TOKENS;
+    }
 
     /**
      * Validates if the provided model is a known valid OpenAI model
@@ -158,7 +174,9 @@ public class OpenAiConfiguration {
         }
 
         String lowerModel = model.toLowerCase();
-        if (lowerModel.contains("gpt-4.1") || lowerModel.contains("gpt-4-1")) {
+        if (lowerModel.contains("gpt-5.4") || lowerModel.contains("gpt-5-4")) {
+            return MAX_TOKENS_GPT_5_4;
+        } else if (lowerModel.contains("gpt-4.1") || lowerModel.contains("gpt-4-1")) {
             return MAX_TOKENS_GPT_4_1;
         } else if (lowerModel.contains("gpt-4")) {
             return MAX_TOKENS_GPT_4O;

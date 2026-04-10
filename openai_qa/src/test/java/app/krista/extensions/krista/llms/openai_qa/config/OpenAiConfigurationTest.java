@@ -96,7 +96,9 @@ class OpenAiConfigurationTest {
             assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1"));
             assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1-mini"));
             assertTrue(OpenAiConfiguration.isValidModel("gpt-4.1-nano"));
-            assertTrue(OpenAiConfiguration.isValidModel("chatgpt-4o-latest"));
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-5.4"));
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-5.4-mini"));
+            assertTrue(OpenAiConfiguration.isValidModel("gpt-5.4-nano"));
         }
 
         @Test

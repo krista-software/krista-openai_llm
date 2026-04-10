@@ -1,5 +1,27 @@
 # Release Notes for Open AI LLM Extension
 
+## Version 2.1.9
+* Krista API Version: 1.0.118
+* Developer: Ramgopal Patidar
+
+### New Features
+* **[KE-3011](https://antbrains.atlassian.net/browse/KE-3011)** - Added GPT-5.4 model family support
+  - Added ChatGPT 5.4, ChatGPT 5.4 Mini, and ChatGPT 5.4 Nano to model selection
+  - GPT-5.4: Frontier model with 1M context, 128K max output ($2.50/$15.00 per 1M tokens)
+  - GPT-5.4 Mini: 400K context, 128K max output ($0.75/$4.50 per 1M tokens)
+  - GPT-5.4 Nano: 400K context, 128K max output ($0.20/$1.25 per 1M tokens)
+
+### Resolved Bugs
+* **[KE-3011](https://antbrains.atlassian.net/browse/KE-3011)** - Removed `chatgpt-4o-latest` model which no longer exists on OpenAI, causing "The model does not exist or you do not have access to it" errors
+* **[KE-3011](https://antbrains.atlassian.net/browse/KE-3011)** - Fixed `max_tokens` parameter error for GPT-4.1 and GPT-5.4 models. Newer models require `max_completion_tokens` instead of `max_tokens`; the extension now dynamically selects the correct parameter based on the model
+
+### Documentation
+* Updated extension configuration docs with all 8 supported models and pricing
+* Updated troubleshooting guide with current model recommendations
+* Updated model specs to match official OpenAI documentation (context windows, max output tokens)
+
+---
+
 ## Version 2.1.8
 * Krista API Version: 1.0.118
 * Developer: Ramgopal Patidar

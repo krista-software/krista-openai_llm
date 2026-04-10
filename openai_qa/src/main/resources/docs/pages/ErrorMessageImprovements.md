@@ -21,7 +21,7 @@ The OpenAI Extension error messages have been completely redesigned to be:
 | Before | After |
 |--------|-------|
 | `"API Key is missing!"` | `"OpenAI API key is required to use this extension. Please configure your API key in the extension settings. If you don't have an API key, visit https://platform.openai.com/api-keys to create one."` |
-| `"Model is not selected!"` | `"Please select an OpenAI model to continue. Choose from ChatGPT 3.5, ChatGPT 4, ChatGPT 4 Latest, or ChatGPT 4.1 Mini in the extension configuration."` |
+| `"Model is not selected!"` | `"Please select an OpenAI model to continue. Choose from ChatGPT 3.5, ChatGPT 4, ChatGPT 4.1, ChatGPT 5.4, or their variants in the extension configuration."` |
 
 #### New Error Messages Added:
 - `CONNECTION_TEST_FAILED`: Comprehensive connection troubleshooting guidance

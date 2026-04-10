@@ -23,18 +23,22 @@ public class OpenAIConstants {
     public static final String BASE_MODEL_NAME = "OpenAI ChatGPT ";
     public static final String GPT_35 = "ChatGPT 3.5";
     public static final String GPT_4 = "ChatGPT 4";
-    public static final String GPT_LATEST = "ChatGPT 4 Latest";
     public static final String GPT_4_1_MINI  = "ChatGPT 4.1 Mini";
     public static final String API_KEY = "API Key";
     public static final String MODEL = "Model Name";
     public static final String GPT_4_1_NANO="ChatGPT 4.1 Nano";
     public static final String GPT_4_1="ChatGPT 4.1";
+    public static final String GPT_5_4 = "ChatGPT 5.4";
+    public static final String GPT_5_4_MINI = "ChatGPT 5.4 Mini";
+    public static final String GPT_5_4_NANO = "ChatGPT 5.4 Nano";
     // Version suffixes for display names
     public static final String VERSION_4 = "4";
     public static final String VERSION_35 = "3.5";
-    public static final String VERSION_4_LATEST = "4 Latest";
     public static final String VERSION_4_1_MINI = "4.1 Mini";
     public static final String VERSION_4_1_NANO = "4.1 Nano";
     public static final String VERSION_4_1 = "4.1";
+    public static final String VERSION_5_4 = "5.4";
+    public static final String VERSION_5_4_MINI = "5.4 Mini";
+    public static final String VERSION_5_4_NANO = "5.4 Nano";
 
 }

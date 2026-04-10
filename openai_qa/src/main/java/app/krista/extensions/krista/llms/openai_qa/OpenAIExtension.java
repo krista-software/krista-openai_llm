@@ -65,10 +65,12 @@ import static app.krista.extensions.krista.llms.openai_qa.catalog.Constants.CONN
  * <ul>
  *   <li>{@link OpenAIConstants#GPT_35} - ChatGPT 3.5 Turbo</li>
  *   <li>{@link OpenAIConstants#GPT_4} - ChatGPT 4</li>
- *   <li>{@link OpenAIConstants#GPT_LATEST} - ChatGPT 4 Latest</li>
  *   <li>{@link OpenAIConstants#GPT_4_1_NANO} - ChatGPT 4.1 Nano</li>
  *   <li>{@link OpenAIConstants#GPT_4_1_MINI} - ChatGPT 4.1 Mini</li>
  *   <li>{@link OpenAIConstants#GPT_4_1} - ChatGPT 4.1</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4} - ChatGPT 5.4</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4_MINI} - ChatGPT 5.4 Mini</li>
+ *   <li>{@link OpenAIConstants#GPT_5_4_NANO} - ChatGPT 5.4 Nano</li>
  * </ul>
  *
  * <h3>Extension Lifecycle:</h3>
@@ -80,15 +82,15 @@ import static app.krista.extensions.krista.llms.openai_qa.catalog.Constants.CONN
  * </ul>
  *
  * @author Krista Extensions Team
- * @version 2.1.5
+ * @version 2.1.9
  * @since 1.0.0
  * @see QueryImpl for core AI query functionality
  * @see OpenAIConstants for configuration constants
  */
 @Java(version = Java.Version.JAVA_21)
-@Extension(version = "2.1.8", jaxrsId = "openai", name = "Open AI")
+@Extension(version = "2.1.9", jaxrsId = "openai", name = "Open AI")
 @Field.Text(value = OpenAIConstants.API_KEY, isSecured = true)
-@Field.PickOne(value = OpenAIConstants.MODEL, values = {OpenAIConstants.GPT_35, OpenAIConstants.GPT_4, OpenAIConstants.GPT_LATEST, OpenAIConstants.GPT_4_1_NANO, OpenAIConstants.GPT_4_1_MINI, OpenAIConstants.GPT_4_1})
+@Field.PickOne(value = OpenAIConstants.MODEL, values = {OpenAIConstants.GPT_35, OpenAIConstants.GPT_4, OpenAIConstants.GPT_4_1_NANO, OpenAIConstants.GPT_4_1_MINI, OpenAIConstants.GPT_4_1, OpenAIConstants.GPT_5_4, OpenAIConstants.GPT_5_4_MINI, OpenAIConstants.GPT_5_4_NANO})
 @StaticResource(path = "docs", file = "docs")
 @ChangeLog(file = "openai_qa/src/main/resources/docs")
 public class OpenAIExtension {
@@ -146,19 +148,22 @@ public class OpenAIExtension {
      */
     @InvokerRequest(InvokerRequest.Type.VALIDATE_ATTRIBUTES)
     public void validateAttributes(Map<String, Object> attributes) {
+        log.info("Validate attributes requested");
 
         if (!(attributes.get(OpenAIConstants.API_KEY) instanceof String)) {
+            log.info("Validation failed: API key is missing or not a string");
             throw new IllegalArgumentException(API_KEY_MISSING);
-
         }
 
         if (!(attributes.get(OpenAIConstants.MODEL) instanceof String)) {
+            log.info("Validation failed: Model is not selected");
             throw new IllegalArgumentException(MODEL_NOT_SELECTED);
-
         }
 
-        this.testConnection((String) attributes.get(OpenAIConstants.API_KEY), (String) attributes.get(OpenAIConstants.MODEL));
-
+        String model = (String) attributes.get(OpenAIConstants.MODEL);
+        log.info("Validating connection with model: {}", model);
+        this.testConnection((String) attributes.get(OpenAIConstants.API_KEY), model);
+        log.info("Validate attributes completed successfully for model: {}", model);
     }
 
     /**
@@ -172,6 +177,7 @@ public class OpenAIExtension {
      */
     @InvokerRequest(InvokerRequest.Type.TEST_CONNECTION)
     public void testConnection() {
+        log.info("Test connection requested for model: {}", this.modelName.get());
         this.testConnection(this.apiKey.get(), this.modelName.get());
     }
 
@@ -196,11 +202,14 @@ public class OpenAIExtension {
      */
     private void testConnection(String apiKey, String modelName) {
         if (apiKey == null || apiKey.isEmpty()) {
+            log.info("Test connection failed: API key is missing or empty");
             throw new IllegalArgumentException(API_KEY_MISSING);
         }
         if (modelName == null || modelName.isEmpty()) {
+            log.info("Test connection failed: Model name is missing or empty");
             throw new IllegalArgumentException(MODEL_NOT_SELECTED);
         }
+        log.info("Testing connection to OpenAI API with model: {}", modelName);
         JsonObject json = new JsonObject();
         json.addProperty("role", "user");
         json.addProperty("content", "Hello there!");
@@ -211,11 +220,11 @@ public class OpenAIExtension {
         String jsonString = finalJson.toString();
         try {
             query.execute(jsonString, apiKey, modelName, false);
+            log.info("Connection test successful for model: {}", modelName);
         } catch (IOException e) {
-            log.info("Connection test failed: {}", e.getMessage());
+            log.info("Connection test failed for model {}: {}", modelName, e.getMessage());
             throw new IllegalArgumentException(CONNECTION_TEST_FAILED + " Error details: " + e.getMessage());
         }
-
     }
 
     /**
