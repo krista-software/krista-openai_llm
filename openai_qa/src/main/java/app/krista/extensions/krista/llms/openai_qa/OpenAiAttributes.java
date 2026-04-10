@@ -51,8 +51,26 @@ public class OpenAiAttributes {
     }
 
     public void update(Map<String, Object> newAttributes) {
-       this.model= OpenAiConfiguration.DEFAULT_MODEL;
+        String displayName = getStringValue(newAttributes, OpenAIConstants.MODEL, "");
+        this.model = resolveApiModelId(displayName);
         this.apiKey = getStringValue(newAttributes, OpenAIConstants.API_KEY, "");
+    }
+
+    /**
+     * Maps user-friendly display names to OpenAI API model identifiers.
+     */
+    private static String resolveApiModelId(String displayName) {
+        return switch (displayName) {
+            case OpenAIConstants.GPT_35 -> "gpt-3.5-turbo";
+            case OpenAIConstants.GPT_4 -> "gpt-4o";
+            case OpenAIConstants.GPT_4_1 -> "gpt-4.1";
+            case OpenAIConstants.GPT_4_1_MINI -> "gpt-4.1-mini";
+            case OpenAIConstants.GPT_4_1_NANO -> "gpt-4.1-nano";
+            case OpenAIConstants.GPT_5_4 -> "gpt-5.4";
+            case OpenAIConstants.GPT_5_4_MINI -> "gpt-5.4-mini";
+            case OpenAIConstants.GPT_5_4_NANO -> "gpt-5.4-nano";
+            default -> OpenAiConfiguration.DEFAULT_MODEL;
+        };
     }
     public String getApiKey()
     {

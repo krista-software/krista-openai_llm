@@ -148,19 +148,22 @@ public class OpenAIExtension {
      */
     @InvokerRequest(InvokerRequest.Type.VALIDATE_ATTRIBUTES)
     public void validateAttributes(Map<String, Object> attributes) {
+        log.info("Validate attributes requested");
 
         if (!(attributes.get(OpenAIConstants.API_KEY) instanceof String)) {
+            log.info("Validation failed: API key is missing or not a string");
             throw new IllegalArgumentException(API_KEY_MISSING);
-
         }
 
         if (!(attributes.get(OpenAIConstants.MODEL) instanceof String)) {
+            log.info("Validation failed: Model is not selected");
             throw new IllegalArgumentException(MODEL_NOT_SELECTED);
-
         }
 
-        this.testConnection((String) attributes.get(OpenAIConstants.API_KEY), (String) attributes.get(OpenAIConstants.MODEL));
-
+        String model = (String) attributes.get(OpenAIConstants.MODEL);
+        log.info("Validating connection with model: {}", model);
+        this.testConnection((String) attributes.get(OpenAIConstants.API_KEY), model);
+        log.info("Validate attributes completed successfully for model: {}", model);
     }
 
     /**
@@ -174,6 +177,7 @@ public class OpenAIExtension {
      */
     @InvokerRequest(InvokerRequest.Type.TEST_CONNECTION)
     public void testConnection() {
+        log.info("Test connection requested for model: {}", this.modelName.get());
         this.testConnection(this.apiKey.get(), this.modelName.get());
     }
 
@@ -198,11 +202,14 @@ public class OpenAIExtension {
      */
     private void testConnection(String apiKey, String modelName) {
         if (apiKey == null || apiKey.isEmpty()) {
+            log.info("Test connection failed: API key is missing or empty");
             throw new IllegalArgumentException(API_KEY_MISSING);
         }
         if (modelName == null || modelName.isEmpty()) {
+            log.info("Test connection failed: Model name is missing or empty");
             throw new IllegalArgumentException(MODEL_NOT_SELECTED);
         }
+        log.info("Testing connection to OpenAI API with model: {}", modelName);
         JsonObject json = new JsonObject();
         json.addProperty("role", "user");
         json.addProperty("content", "Hello there!");
@@ -213,11 +220,11 @@ public class OpenAIExtension {
         String jsonString = finalJson.toString();
         try {
             query.execute(jsonString, apiKey, modelName, false);
+            log.info("Connection test successful for model: {}", modelName);
         } catch (IOException e) {
-            log.info("Connection test failed: {}", e.getMessage());
+            log.info("Connection test failed for model {}: {}", modelName, e.getMessage());
             throw new IllegalArgumentException(CONNECTION_TEST_FAILED + " Error details: " + e.getMessage());
         }
-
     }
 
     /**
